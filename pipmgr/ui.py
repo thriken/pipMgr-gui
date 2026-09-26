@@ -395,9 +395,16 @@ class App(tk.Tk):
             return pipwrap.list_outdated(source)
 
         def done(result):
-            self.outdated = result or {}
+            all_out = result or {}
+            # 仅保留本工具能识别并操作的包：pip 列出的某些包（如 setuptools）可能
+            # 未出现在 importlib.metadata 的扫描结果中，直接计入会虚报数量。
+            self.outdated = {k: v for k, v in all_out.items() if k in self.by_key}
+            skipped = len(all_out) - len(self.outdated)
             self._populate_installed()
             self._log("可更新包：%d 个。" % len(self.outdated))
+            if skipped:
+                self._log("（已忽略 %d 个本工具无法识别的包：%s）" % (
+                    skipped, ", ".join(sorted(k for k in all_out if k not in self.by_key))))
             if not self.outdated:
                 messagebox.showinfo("检查更新", "所有包都是最新的。")
 
