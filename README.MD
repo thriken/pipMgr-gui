@@ -41,7 +41,7 @@ python -m pipmgr         # 也可作为模块启动
 
 ```
 main.py               入口脚本
-启动.bat              一键启动（Windows）
+start.bat              一键启动（Windows） python main.py可换成pythonw main.py无控制台窗口
 pipmgr/
   __init__.py         包标识
   __main__.py         模块启动入口（python -m pipmgr）
